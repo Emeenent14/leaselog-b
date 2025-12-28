@@ -1,6 +1,7 @@
 """
 Property models for LeaseLog API.
 """
+import builtins
 from django.db import models
 from core.models import OwnedModel, BaseModel
 
@@ -108,12 +109,19 @@ class Property(OwnedModel):
             # Check if there's an active lease
             from apps.leases.models import Lease
             active_lease = Lease.objects.filter(
-                property=self,
+                rental_property=self,
                 unit__isnull=True,
                 status='active',
                 is_deleted=False
             ).exists()
             return 'occupied' if active_lease else 'vacant'
+
+    @property
+    def name(self):
+        """Return a display name for the property."""
+        if self.unit_number:
+            return f"{self.street_address} #{self.unit_number}"
+        return self.street_address
 
 
 class Unit(BaseModel):
@@ -152,6 +160,11 @@ class Unit(BaseModel):
 
     def __str__(self):
         return f"{self.property.street_address} - Unit {self.unit_number}"
+
+    @builtins.property
+    def name(self):
+        """Return a display name for the unit."""
+        return f"Unit {self.unit_number}"
 
 
 class PropertyPhoto(BaseModel):
