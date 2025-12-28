@@ -30,3 +30,13 @@ pytest-cov>=4.1,<5.0
 
 # Development
 ipython>=8.20,<9.0
+
+# Phase 2 - Payments & Banking
+stripe>=8.0,<9.0
+plaid-python>=15.0,<16.0
+
+# Phase 2 - Background Tasks
+celery>=5.3,<6.0
+redis>=5.0,<6.0
+django-celery-beat>=2.5,<3.0
+django-celery-results>=2.5,<3.0

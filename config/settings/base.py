@@ -34,6 +34,8 @@ THIRD_PARTY_APPS = [
     'corsheaders',
     'django_filters',
     'drf_spectacular',
+    'django_celery_beat',
+    'django_celery_results',
 ]
 
 LOCAL_APPS = [
@@ -44,6 +46,11 @@ LOCAL_APPS = [
     'apps.transactions',
     'apps.payments',
     'apps.reports',
+    # Phase 2
+    'apps.documents',
+    'apps.maintenance',
+    'apps.banking',
+    'apps.tenant_portal',
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -208,3 +215,42 @@ LOGGING = {
         },
     },
 }
+
+# =============================================================================
+# Phase 2 Configuration
+# =============================================================================
+
+# Stripe Configuration
+STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY', '')
+STRIPE_PUBLISHABLE_KEY = os.getenv('STRIPE_PUBLISHABLE_KEY', '')
+STRIPE_WEBHOOK_SECRET = os.getenv('STRIPE_WEBHOOK_SECRET', '')
+STRIPE_CONNECT_CLIENT_ID = os.getenv('STRIPE_CONNECT_CLIENT_ID', '')
+
+# Plaid Configuration
+PLAID_CLIENT_ID = os.getenv('PLAID_CLIENT_ID', '')
+PLAID_SECRET = os.getenv('PLAID_SECRET', '')
+PLAID_ENV = os.getenv('PLAID_ENV', 'sandbox')  # sandbox, development, production
+
+# Celery Configuration
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'redis://localhost:6379/0')
+CELERY_RESULT_BACKEND = 'django-db'
+CELERY_CACHE_BACKEND = 'django-cache'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = TIME_ZONE
+CELERY_TASK_TRACK_STARTED = True
+CELERY_TASK_TIME_LIMIT = 30 * 60  # 30 minutes
+
+# Celery Beat Schedule
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers:DatabaseScheduler'
+
+# File Storage (S3/R2)
+AWS_ACCESS_KEY_ID = os.getenv('AWS_ACCESS_KEY_ID', '')
+AWS_SECRET_ACCESS_KEY = os.getenv('AWS_SECRET_ACCESS_KEY', '')
+AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME', 'leaselog-documents')
+AWS_S3_ENDPOINT_URL = os.getenv('AWS_S3_ENDPOINT_URL', '')  # For Cloudflare R2
+AWS_S3_REGION_NAME = os.getenv('AWS_S3_REGION_NAME', 'auto')
+AWS_DEFAULT_ACL = None
+AWS_S3_OBJECT_PARAMETERS = {'CacheControl': 'max-age=86400'}
+AWS_QUERYSTRING_EXPIRE = 3600  # 1 hour for presigned URLs

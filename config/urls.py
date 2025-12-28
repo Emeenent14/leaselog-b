@@ -21,6 +21,12 @@ urlpatterns = [
         path('', include('apps.payments.urls')),
         path('', include('apps.reports.urls')),
 
+        # Phase 2
+        path('', include('apps.banking.urls')),
+        path('', include('apps.documents.urls')),
+        path('', include('apps.maintenance.urls')),
+        path('', include('apps.tenant_portal.urls')),
+
         # Health check
         path('health/', HealthCheckView.as_view(), name='health_check'),
     ])),
